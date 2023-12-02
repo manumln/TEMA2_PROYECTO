@@ -1,4 +1,5 @@
 package com.example.tema2_proyecto
+
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,25 +12,29 @@ import androidx.core.content.ContextCompat
 
 class CallActivity : AppCompatActivity() {
 
-    private val CALL_PERMISSION_REQUEST_CODE = 112
+    private lateinit var botonEmergencias: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.call_activity)
 
-        val emergencyCallButton = findViewById<Button>(R.id.BotonEmergencias)
+        // Mueve esta línea después de setContentView
+        botonEmergencias = findViewById(R.id.botonEmergencias)
 
-        emergencyCallButton.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CALL_PHONE
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                makePhoneCall()
-            } else {
-                // Solicitar el permiso al usuario
-                requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
-            }
+        botonEmergencias.setOnClickListener {
+            checkAndMakePhoneCall()
+        }
+    }
+
+    private fun checkAndMakePhoneCall() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CALL_PHONE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            makePhoneCall()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
         }
     }
 
@@ -38,17 +43,18 @@ class CallActivity : AppCompatActivity() {
             if (isGranted) {
                 makePhoneCall()
             } else {
+                // El usuario denegó el permiso, podrías mostrar un mensaje o tomar alguna acción.
             }
         }
 
     private fun makePhoneCall() {
         val emergencyNumber = "tel:911"
 
-        // permiso? CALL_PHONE
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.CALL_PHONE
-            ) == PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED &&
+            packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)
         ) {
             val callIntent = Intent(Intent.ACTION_CALL)
             callIntent.data = Uri.parse(emergencyNumber)

@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
     private lateinit var botonLlamada: ImageButton
     private lateinit var botonAlarma: ImageButton
-    private lateinit var botonURL: ImageButton
+    private lateinit var botonNavegador: ImageButton
     private lateinit var botonMusica: ImageButton
     private lateinit var botonCartas : ImageButton
     private lateinit var botonChistes : ImageButton
@@ -26,10 +26,11 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         setContentView(R.layout.activity_main)
         botonLlamada = findViewById(R.id.botonLlamada)
         botonAlarma = findViewById(R.id.botonAlarma)
-        botonURL = findViewById(R.id.botonURL)
+        botonNavegador = findViewById(R.id.botonNavegador)
         botonMusica = findViewById(R.id.botonMusica)
         botonCartas = findViewById(R.id.botonCartas)
         botonChistes = findViewById(R.id.botonChistes)
+
         initEvent()
     }
 
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
             crearAlarma()
         }
 
-        botonURL.setOnClickListener {
+        botonNavegador.setOnClickListener {
             Log.d("MainActivity", "Clic en el botón de URL")
             val url = "https://www.google.es"
             openWebPage(url)
@@ -53,9 +54,14 @@ class MainActivity : AppCompatActivity(), OnClickListener {
             abrirSpotify("spotify:track:6nK2pIKFcRc5frrZKHgsiT");
         }
         botonCartas.setOnClickListener {
-            //val intent = Intent(this, CartasActivity::class.java)
+            val intent = Intent(this, CartasActivity::class.java)
             startActivity(intent)
         }
+        botonChistes.setOnClickListener {
+            val intent = Intent(this, ChistesActivty::class.java)
+            startActivity(intent)
+        }
+
     }
     private fun abrirSpotify(url: String) {
         val spotifyDeepLink = Uri.parse(url)

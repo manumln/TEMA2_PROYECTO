@@ -52,5 +52,4 @@
         android:text="Iniciar Sesión"
         android:textAllCaps="false"
         android:textColor="#FFFFFF" />
-
 </RelativeLayout>

@@ -24,12 +24,15 @@ class CartasActivity : AppCompatActivity() {
         setContentView(bindingMain.root)
         handler = Handler(Looper.getMainLooper())
         initEvent()
+        bindingMain.btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     private fun initEvent() {
         bindingMain.txtResultado.visibility = View.INVISIBLE
         bindingMain.btnBarajear.setOnClickListener {
-        bindingMain.txtResultado.visibility = View.VISIBLE
+            bindingMain.txtResultado.visibility = View.VISIBLE
             sum = 0 // Reinicia la suma al hacer clic en el botón
             game()
         }
@@ -62,7 +65,7 @@ class CartasActivity : AppCompatActivity() {
 
     private fun throwDadoInTime() {
         val numDados = IntArray(3) { Random.nextInt(1, 6) }
-        cardValues = numDados.clone() // Guarda los valores de las cartas para calcular la suma después
+        cardValues = numDados.clone()
 
         val imagViews: Array<ImageView> = arrayOf(
             bindingMain.imagviewCard1,

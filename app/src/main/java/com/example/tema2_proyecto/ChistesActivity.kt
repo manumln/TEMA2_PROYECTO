@@ -26,6 +26,11 @@ class ChistesActivity : AppCompatActivity() {
         configureTextToSpeech()
         initHander()
         initEvent()
+
+        // Configura el listener para el botón de retroceso
+        binding.btnBack.setOnClickListener {
+            finish() // Cierra la actividad actual y retrocede a la anterior
+        }
     }
 
     private fun initHander() {

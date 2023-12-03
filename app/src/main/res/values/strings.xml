@@ -1,17 +1,15 @@
 <resources>
     <string name="app_name">tema2_proyecto</string>
     <string name="title_activity_cartas">CartasActivity</string>
-    <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="selecciona_tiempo">Selecciona el tiempo entre tiradas</string>
-    <string-array name="tiempos">
-        <item>1 segundo</item>
-        <item>2 segundos</item>
-        <item>3 segundos</item>
-    </string-array>
+    <string name="chiste">   Esto era uno, que era tan tonto, tan tonto, tan tonto, que echó una carrera
+    el sólo y quedó segundo</string>
+    <string name="describe">Este boton te mostrará chistes aleatorios</string>
+
 
 
     <string name="lorem_ipsum">

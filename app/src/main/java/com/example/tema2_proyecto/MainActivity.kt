@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
             startActivity(intent)
         }
         botonChistes.setOnClickListener {
-            val intent = Intent(this, ChistesActivty::class.java)
+            val intent = Intent(this, ChistesActivity::class.java)
             startActivity(intent)
         }
 

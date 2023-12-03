@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.tema2_proyecto.databinding.ActivityCartasBinding
@@ -15,6 +16,7 @@ class CartasActivity : AppCompatActivity() {
     private lateinit var bindingMain: ActivityCartasBinding
     private var sum: Int = 0
     private lateinit var handler: Handler
+    private lateinit var cardValues: IntArray
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +28,9 @@ class CartasActivity : AppCompatActivity() {
 
     private fun initEvent() {
         bindingMain.txtResultado.visibility = View.INVISIBLE
-        bindingMain.imageButton.setOnClickListener {
-            bindingMain.txtResultado.visibility = View.VISIBLE
+        bindingMain.btnBarajear.setOnClickListener {
+        bindingMain.txtResultado.visibility = View.VISIBLE
+            sum = 0 // Reinicia la suma al hacer clic en el botón
             game()
         }
     }
@@ -58,7 +61,9 @@ class CartasActivity : AppCompatActivity() {
     }
 
     private fun throwDadoInTime() {
-        val numDados = Array(3) { Random.nextInt(1, 6) }
+        val numDados = IntArray(3) { Random.nextInt(1, 6) }
+        cardValues = numDados.clone() // Guarda los valores de las cartas para calcular la suma después
+
         val imagViews: Array<ImageView> = arrayOf(
             bindingMain.imagviewCard1,
             bindingMain.imagviewCard2,
@@ -69,11 +74,6 @@ class CartasActivity : AppCompatActivity() {
             handler.post {
                 selectView(imagViews[i], numDados[i])
             }
-        }
-
-        handler.post {
-            sum += numDados.sum()
-            println("Cartas: ${numDados.joinToString()} Suma: $sum")
         }
     }
 
@@ -89,7 +89,8 @@ class CartasActivity : AppCompatActivity() {
     }
 
     private fun viewResult() {
+        sum += cardValues.sum()
         bindingMain.txtResultado.text = sum.toString()
-        println(sum)
+        println("Cartas: ${cardValues.joinToString()} Suma: $sum")
     }
 }

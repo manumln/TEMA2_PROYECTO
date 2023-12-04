@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     }
     private fun crearAlarma() {
         val alarma = Calendar.getInstance()
-        alarma.add(Calendar.MINUTE, 2) // Add 2 minutes to the current time
+        alarma.add(Calendar.MINUTE, 2)
 
         val intent = Intent(AlarmClock.ACTION_SET_ALARM)
         intent.putExtra(AlarmClock.EXTRA_MESSAGE, "Alarma en 2 minutos")

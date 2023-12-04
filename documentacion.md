@@ -1,5 +1,5 @@
 ## Actividad Principal (MainActivity)
-La `MainActivity` es la actividad principal de la aplicación y se encarga de la interfaz de usuario y la lógica de interacción con el usuario.
+La MainActivity es la actividad principal de la aplicación. Nos proporciona una UI con varios botones que permiten al usuario realizar acciones específicas.
 
 #### Botones y Acciones
 - **Llamada:** Al hacer clic en este botón, se inicia una actividad de llamada.
@@ -110,29 +110,88 @@ La clase LoginActivity representa la pantalla de inicio de sesión de la aplicac
 Para validar las credenciales, se obtienen los valores ya registrados en InputUser y InputPass. Luego, se verifica si coinciden con las constantes de usuario y contraseña predefinidas (MYUSER y MYPASS). Si las credenciales son correctas, se inicia la actividad principal (MainActivity) y se pasan las credenciales como extras en el intent. De lo contrario, se muestra un mensaje de error.
 
 ```java
-validarButton.setOnClickListener {
-    val inputUser = usernameEditText.text.toString()
-    val inputPass = passwordEditText.text.toString()
+class LoginActivity : AppCompatActivity() {
 
-    if (inputUser == MYUSER && inputPass == MYPASS) {
-        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-        intent.putExtra("USERNAME", inputUser)
-        intent.putExtra("PASSWORD", inputPass)
-        startActivity(intent)
-    } else {
-        Toast.makeText(this@LoginActivity, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+    private val MYUSER = "user"
+    private val MYPASS = "1234"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.login_activity)
+
+        val usernameEditText: EditText = findViewById(R.id.usernameEditText)
+        val passwordEditText: EditText = findViewById(R.id.passwordEditText)
+        val validarButton: Button = findViewById(R.id.validarButton)
+
+        validarButton.setOnClickListener {
+            val inputUser = usernameEditText.text.toString()
+            val inputPass = passwordEditText.text.toString()
+
+            if (inputUser == MYUSER && inputPass == MYPASS) {
+                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                intent.putExtra("USERNAME", inputUser)
+                intent.putExtra("PASSWORD", inputPass)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this@LoginActivity, "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
 ```
 
 ## Actividad Cartas (CartasActivity)
-La clase `CartasActivity` en la aplicación Android tema2_proyecto gestiona el juego de cartas. Utiliza un temporizador para simular el barajeo de cartas y calcular la suma de sus valores.
+La clase `CartasActivity` en la aplicación gestiona el juego de cartas. Utiliza un temporizador para simular el barajeo de cartas y calcular la suma de sus valores.
 
-#### Lógica del Juego
+### Lógica del Juego
 El método game() inicia la lógica del juego llamando a sheduleRun(), que utiliza un temporizador para simular el lanzamiento de cartas.
 
+
+
+### Lanzamiento de Cartas
+throwDadoInTime() simula el lanzamiento de cartas y actualiza las imágenes en intervalos específicos.
+
+
+### Método selectView
+El método selectView se encarga de seleccionar la imagen de una carta y asignarla a las cartas.
+
+
+
+### Resultado del Juego
+viewResult() calcula la suma de los valores de las cartas y actualiza la interfaz.
+
 ```java
-private fun sheduleRun() {
+class CartasActivity : AppCompatActivity() {
+    private lateinit var bindingMain: ActivityCartasBinding
+    private var sum: Int = 0
+    private lateinit var handler: Handler
+    private lateinit var cardValues: IntArray
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        bindingMain = ActivityCartasBinding.inflate(layoutInflater)
+        setContentView(bindingMain.root)
+        handler = Handler(Looper.getMainLooper())
+        initEvent()
+        bindingMain.btnBack.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun initEvent() {
+        bindingMain.txtResultado.visibility = View.INVISIBLE
+        bindingMain.btnBarajear.setOnClickListener {
+            bindingMain.txtResultado.visibility = View.VISIBLE
+            sum = 0 // Reinicia la suma al hacer clic en el botón
+            game()
+        }
+    }
+
+    private fun game() {
+        sheduleRun()
+    }
+
+    private fun sheduleRun() {
         val schedulerExecutor = Executors.newSingleThreadScheduledExecutor()
         val msc = 1000
 
@@ -152,15 +211,10 @@ private fun sheduleRun() {
 
         schedulerExecutor.shutdown()
     }
-```
 
-#### Lanzamiento de Cartas
-throwDadoInTime() simula el lanzamiento de cartas y actualiza las imágenes en intervalos específicos.
-
-```java
-private fun throwDadoInTime() {
+    private fun throwDadoInTime() {
         val numDados = IntArray(3) { Random.nextInt(1, 6) }
-        cardValues = numDados.clone() // Guarda los valores de las cartas para calcular la suma después
+        cardValues = numDados.clone()
 
         val imagViews: Array<ImageView> = arrayOf(
             bindingMain.imagviewCard1,
@@ -174,12 +228,8 @@ private fun throwDadoInTime() {
             }
         }
     }
-```
-#### Método selectView
-El método selectView se encarga de seleccionar la imagen de una carta y asignarla a las cartas.
 
-```java
-private fun selectView(imgV: ImageView, v: Int) {
+    private fun selectView(imgV: ImageView, v: Int) {
         when (v) {
             1 -> imgV.setImageResource(R.drawable.carta1)
             2 -> imgV.setImageResource(R.drawable.carta2)
@@ -189,45 +239,67 @@ private fun selectView(imgV: ImageView, v: Int) {
             6 -> imgV.setImageResource(R.drawable.carta6)
         }
     }
-```
 
-#### Resultado del Juego
-viewResult() calcula la suma de los valores de las cartas y actualiza la interfaz.
-
-```java
-private fun viewResult() {
-    sum += cardValues.sum()
-    bindingMain.txtResultado.text = sum.toString()
-    println("Cartas: ${cardValues.joinToString()} Suma: $sum")
+    private fun viewResult() {
+        sum += cardValues.sum()
+        bindingMain.txtResultado.text = sum.toString()
+        println("Cartas: ${cardValues.joinToString()} Suma: $sum")
+    }
 }
 ```
 
 ## Actividad Chistes (ChistesActivity)
 
-La clase ChistesActivity en la aplicación Android tema2_proyecto gestiona la presentación de chistes, utilizando TextToSpeech para la síntesis de voz y una lógica especial para manejar toques simples y dobles.
+La clase ChistesActivity en la aplicación gestiona la presentación de chistes, utilizando TextToSpeech para la síntesis de voz y una lógica especial para manejar toques simples y dobles.
 
-#### Método TextToSpeech
+### Método TextToSpeech
 
 La configuración del sistema TextToSpeech se realiza en configureTextToSpeech. Se inicializa y se establece el idioma predeterminado del dispositivo.
 
-```java
-private fun configureTextToSpeech() {
-    textToSpeech = TextToSpeech(applicationContext, TextToSpeech.OnInitListener {
-        if (it != TextToSpeech.ERROR) {
-            textToSpeech.language = Locale.getDefault()
-            Log.i(MYTAG, "Sin problemas en la configuración TextToSpeech")
-        } else {
-            Log.i(MYTAG, "Error en la configuración TextToSpeech")
-        }
-    })
-}
-```
-#### Método initHander
+
+### Método initHander
 
 Se inicia un hilo que simula una carga inicial y presenta un botón después de cierto tiempo.
 
+
+### Método initEvent
+
+Se manejan toques simples y dobles, ejecutando diferentes acciones según la lógica definida en initEvent.
+
+### Método speakMeDescription
+
+La síntesis de voz se realiza en speakMeDescription, donde se utiliza el sistema TextToSpeech para hablar una cadena proporcionada.
+
+
+### Metodo onDestroy
+
+En onDestroy, se detiene y cierra el sistema TextToSpeech para liberar recursos cuando la actividad se destruye.
+
 ```java
-private fun initHander() {
+class ChistesActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityChistesBinding
+    private lateinit var textToSpeech: TextToSpeech
+    private val TOUCH_MAX_TIME = 500
+    private var touchLastTime: Long = 0
+    private lateinit var handler: Handler
+    val MYTAG = "LOGCAT"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityChistesBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        configureTextToSpeech()
+        initHander()
+        initEvent()
+
+        // Configura el listener para el botón de retroceso
+        binding.btnBack.setOnClickListener {
+            finish() // Cierra la actividad actual y retrocede a la anterior
+        }
+    }
+
+    private fun initHander() {
         handler = Handler(Looper.getMainLooper())
         binding.progressBar.visibility = View.VISIBLE
         binding.btnExample.visibility = View.GONE
@@ -244,48 +316,74 @@ private fun initHander() {
             }
         }.start()
     }
-```
 
-#### Método initEvent
+    private fun configureTextToSpeech() {
+        textToSpeech = TextToSpeech(applicationContext, TextToSpeech.OnInitListener {
+            if (it != TextToSpeech.ERROR) {
+                textToSpeech.language = Locale.getDefault()
+                Log.i(MYTAG, "Sin problemas en la configuración TextToSpeech")
+            } else {
+                Log.i(MYTAG, "Error en la configuración TextToS 6ymn  /h")
+            }
+        })
+    }
 
-Se manejan toques simples y dobles, ejecutando diferentes acciones según la lógica definida en initEvent.
+    private fun initEvent() {
+        binding.btnExample.setOnClickListener {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - touchLastTime < TOUCH_MAX_TIME) {
+                // Doble toque
+                executorDoubleTouch()
+            } else {
+                // Toque simple
+                speakRandomJoke()
+            }
 
-```java
-private fun initEvent() {
-    binding.btnExample.setOnClickListener {
-        val currentTime = System.currentTimeMillis()
-        if (currentTime - touchLastTime < TOUCH_MAX_TIME) {
-            executorDoubleTouch()
-        } else {
-            speakRandomJoke()
+            touchLastTime = currentTime
         }
-        touchLastTime = currentTime
+    }
+
+    private fun speakRandomJoke() {
+        val randomJoke = ChistesManager.chiste.random()
+        speakMeDescription(randomJoke)
+    }
+
+    private fun executorDoubleTouch() {
+        val chiste = resources.getString(R.string.chiste)
+        speakMeDescription(chiste)
+    }
+
+    private fun speakMeDescription(s: String) {
+        textToSpeech.speak(s, TextToSpeech.QUEUE_FLUSH, null, null)
+    }
+
+    override fun onDestroy() {
+        if (::textToSpeech.isInitialized) {
+            textToSpeech.stop()
+            textToSpeech.shutdown()
+        }
+        super.onDestroy()
     }
 }
 ```
 
-#### Método speakMeDescription
+## ChistesManager
 
-La síntesis de voz se realiza en speakMeDescription, donde se utiliza el sistema TextToSpeech para hablar una cadena proporcionada.
-
-```java
-private fun speakMeDescription(s: String) {
-    textToSpeech.speak(s, TextToSpeech.QUEUE_FLUSH, null, null)
-}
-```
-
-#### Metodo onDestroy
-
-En onDestroy, se detiene y cierra el sistema TextToSpeech para liberar recursos cuando la actividad se destruye.
+La clase ChistesManager es un objeto singleton que proporciona una lista de chistes. Cada chiste es representado como una cadena de texto.
 
 ```java
-override fun onDestroy() {
-    if (::textToSpeech.isInitialized) {
-        textToSpeech.stop()
-        textToSpeech.shutdown()
-    }
-    super.onDestroy()
+object ChistesManager {
+    val chiste = listOf(
+        "¿Cuál es el colmo de Aladino? Tener mal genio.",
+        "¿Qué le dijo un semáforo a otro? No me mires que me estoy cambiando.",
+        "¿Por qué los pájaros no usan Facebook? Porque ya tienen Twitter",
+        "¿Cuál es el animal más antiguo? La cebra, porque está en blanco y negro",
+        "¿Qué hace una abeja en el gimnasio? ¡Zum-ba!",
+        "¿Cómo se llama un boomerang que no vuelve? Palo.",
+        "¿Cómo maldice un pollito a otro pollito? ¡Caldito seas!",
+        "¿Cómo se dice pañuelo en japonés? Sakasnoto",
+        "¿Cuál es el colmo de un jardinero? Tener malas hierbas.",
+        "¿Qué hace una impresora en un bar? Imprime cócteles."
+    )
 }
-
 ```
-

@@ -36,20 +36,24 @@ class ChistesActivity : AppCompatActivity() {
     private fun initHander() {
         handler = Handler(Looper.getMainLooper())
         binding.progressBar.visibility = View.VISIBLE
-        binding.btnExample.visibility = View.GONE
 
         Thread {
             Thread.sleep(3000)
             handler.post {
                 binding.progressBar.visibility = View.GONE
+                // Assuming you want to show the ImageButtons after hiding the progress bar
+                binding.botonAnimal.visibility = View.VISIBLE
+                binding.botonCiencia.visibility = View.VISIBLE
+                binding.botonDeporte.visibility = View.VISIBLE
+
                 val description = getString(R.string.describe).toString()
                 Thread.sleep(4000)
                 Log.i(MYTAG, "Se ejecuta correctamente el hilo")
-                binding.btnExample.visibility = View.VISIBLE
                 speakMeDescription(description)
             }
         }.start()
     }
+
 
     private fun configureTextToSpeech() {
         textToSpeech = TextToSpeech(applicationContext, TextToSpeech.OnInitListener {
@@ -63,23 +67,48 @@ class ChistesActivity : AppCompatActivity() {
     }
 
     private fun initEvent() {
-        binding.btnExample.setOnClickListener {
-            val currentTime = System.currentTimeMillis()
-            if (currentTime - touchLastTime < TOUCH_MAX_TIME) {
-                // Doble toque
-                executorDoubleTouch()
-            } else {
-                // Toque simple
-                speakRandomJoke()
-            }
+        binding.botonAnimal.setOnClickListener {
+            handleButtonClick(ChistesManager.chistesAnimales)
+        }
 
-            touchLastTime = currentTime
+        binding.botonCiencia.setOnClickListener {
+            handleButtonClick(ChistesManager.chistesCiencia)
+        }
+
+        binding.botonDeporte.setOnClickListener {
+            handleButtonClick(ChistesManager.chistesDeportes)
         }
     }
 
-    private fun speakRandomJoke() {
-        val randomJoke = ChistesManager.chiste.random()
+    private fun handleButtonClick(category: List<String>) {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - touchLastTime < TOUCH_MAX_TIME) {
+            // Doble toque
+            executorDoubleTouch()
+        } else {
+            // Toque simple
+            speakRandomJoke(category)
+        }
+
+        touchLastTime = currentTime
+    }
+
+
+    private fun speakRandomJoke(category: List<String>) {
+        val randomJoke = category.random()
         speakMeDescription(randomJoke)
+    }
+
+    fun onAnimalsButtonClick(view: View) {
+        speakRandomJoke(ChistesManager.chistesAnimales)
+    }
+
+    fun onScienceButtonClick(view: View) {
+        speakRandomJoke(ChistesManager.chistesCiencia)
+    }
+
+    fun onSportsButtonClick(view: View) {
+        speakRandomJoke(ChistesManager.chistesDeportes)
     }
 
     private fun executorDoubleTouch() {
